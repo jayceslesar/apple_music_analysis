@@ -1,6 +1,6 @@
 *.csv
 *.json
-*.vsc
+.vscode
 *.xlsx
 *.txt
 __pycache__
