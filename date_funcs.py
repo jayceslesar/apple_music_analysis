@@ -1,7 +1,6 @@
 # script for testing
 import datetime
 import pandas as pd
-import numpy as np
 
 
 def extract_dates(dates_list):
