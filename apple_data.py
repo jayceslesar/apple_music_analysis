@@ -4,8 +4,6 @@ import date_funcs
 from collections import Counter
 import pandas as pd
 import album_art
-import plotly.express as px
-import plotly.graph_objects as go
 
 
 class AppleData:
@@ -23,7 +21,8 @@ class AppleData:
             print('Valid Years: ' + str(sorted(self.valid_years)))
             return
 
-    def year_in_review(self):
+    @staticmethod
+    def year_in_review_songs(self):
         return_data = {}
         year = max(self.valid_years)
         df = self.data.loc[(self.data['Year'] == year)]
@@ -35,16 +34,13 @@ class AppleData:
             df['Genre'].to_list()).most_common(5)
         return_data['mins_total'] = format(date_funcs.mins_total(df), ',d')
         return_data['plays_total'] = len(df)
-        self.return_data = return_data
+        return return_data
 
-    def top_five_songs_dash(self):
-        cols = ['song', 'artist', 'plays', 'image', 'song_artist']
-        songs = []
-        artists = []
-        plays = []
-        album_art_links = []
-        song_artist = []
-        top_five = self.return_data['top_five_songs']
+    def top_five_songs_year_dash(self):
+        cols = ['song', 'artist', 'plays',
+                'album_art_rgb', 'image_link', 'song_artist']
+        songs, artists, plays, album_art_rgb, image_link, song_artist = [], [], [], [], [],  []
+        top_five = self.year_in_review_songs(self)['top_five_songs']
         i = 0
         for song in top_five:
             songs.append(song[0].split('-')[0][:-1])
@@ -52,21 +48,59 @@ class AppleData:
             search = song[0].split('-')[0][:-1] + ' ' + \
                 song[0].split('-')[1][1:]
             plays.append(song[1])
-            album_art_links.append(album_art.get_art(search))
+            album_art_rgb.append(album_art.compute_top_image_color(search))
+            image_link.append(album_art.get_art(search))
             song_artist.append(songs[i] + ' - ' + artists[i])
             i += 1
-        to_add = [songs, artists, plays, album_art_links, song_artist]
+        to_add = [songs, artists, plays,
+                  album_art_rgb, image_link, song_artist]
         df = pd.DataFrame(columns=cols)
         for col in range(len(cols)):
             df[cols[col]] = to_add[col]
-        fig = px.bar(df, x='song_artist', y='plays',
-                     hover_data=['artist'], color='song',
-                     labels={'plays': 'num plays'}, height=800)
-        fig.show()
+        to_graph = []
+        images = []
+        x_ref = 0.1
+        for i in range(len(df)):
+            curr = {
+                'x': ['<b>' + df['song_artist'].to_list()[i] + '<b>'],
+                'y': [str(df['plays'].to_list()[i])],
+                'type': 'bar',
+                'name': '<b>' + df['song_artist'].to_list()[i] + '<b>',
+                'width': '.5',
+                'marker': {
+                    'color': df['album_art_rgb'].to_list()[i]
+                }
+            }
+            to_graph.append(curr)
+            curr_img = {
+                'source': df['image_link'].to_list()[i],
+                'xref': 'paper',
+                'yref': 'paper',
+                'x': str(x_ref),
+                'y': str(df['plays'].to_list()[i]*.945/max(df['plays'].to_list())),
+                'sizex': '0.2',
+                'sizey': '0.3',
+                'xanchor': 'center',
+                'yanchor': 'bottom'
+            }
+            x_ref += .2
+            images.append(curr_img)
+        retun_data = {}
+        retun_data['graph'] = to_graph
+        retun_data['imgs'] = images
+        return retun_data
 
-
-path = r'D:\apple_music_data\first_maybe_good.csv'
-
-test = AppleData(path)
-test.year_in_review()
-print(test.top_five_songs_dash())
+    @staticmethod
+    def year_in_review_artists(self):
+        return_data = {}
+        year = max(self.valid_years)
+        df = self.data.loc[(self.data['Year'] == year)]
+        return_data['top_five_artists'] = Counter(
+            df['True Name'].to_list()).most_common(5)
+        return_data['top_five_artists'] = Counter(
+            df['Artist Name'].to_list()).most_common(5)
+        return_data['top_five_genres'] = Counter(
+            df['Genre'].to_list()).most_common(5)
+        return_data['mins_total'] = format(date_funcs.mins_total(df), ',d')
+        return_data['plays_total'] = len(df)
+        return return_data
