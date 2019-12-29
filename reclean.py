@@ -10,7 +10,7 @@ def active_clean(path):
     cols_to_check = ['Content Name', 'Artist Name',
                      'Event Start Timestamp', 'Event End Timestamp', 'Client IP Address', 'Genre']
     rows_to_drop = []
-    df = pd.read_csv(path, encoding='latin1')
+    df = pd.read_csv(path)
     for col in cols_to_check:
         curr_col_bools = list(pd.isnull(df[col]))
         for i in range(len(curr_col_bools)):

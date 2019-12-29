@@ -1,5 +1,23 @@
 import io
 from collections import Counter
+import unicodedata
+import re
+import unicodedata
+
+
+def fix(text):
+    wierd = "ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïðñòóôõöùúûüýÿ"
+    wierd_list = list(wierd)
+    wierd_map = "SZszYAAAAAACEEEEIIIIDNOOOOOUUUUYaaaaaaceeeeiiiidnooooouuuuyy"
+    wierd_map_list = list(wierd_map)
+    list_string = list(text)
+    for c in range(len(list_string)):
+        if list_string[c] in wierd_list:
+            list_string[c] = wierd_map_list[wierd_list.index(list_string[c])]
+    fixed = ""
+    for c in list_string:
+        fixed += c
+    return fixed
 
 
 def get_art(name):
@@ -7,7 +25,10 @@ def get_art(name):
     import html
     coverpy = coverpy.CoverPy()
     limit = 1
-    result = coverpy.get_cover(name, limit)
+    try:
+        result = coverpy.get_cover(name, limit)
+    except:
+        return
     return result.artwork(200)
 
 

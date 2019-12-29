@@ -4,7 +4,19 @@ import dash_html_components as html
 import plotly.graph_objs as go
 
 
+# ! TODO: make scalable -- add more graphs
+
 def dash_test(data):
+    type = data.pop('type')
+    if type == 'year':
+        year = data.pop('year')
+        title_text = '<b>Top 5 Songs of ' + year + '<b>'
+        images_text = '<b>Plays in ' + year + '<b>'
+    if type == 'month':
+        year = data.pop('year')
+        month = data.pop('month')
+        title_text = '<b>Top 5 Songs of ' + month + ' ' + year + '<b>'
+        images_text = '<b>Plays in ' + month + ' ' + year + '<b>'
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.layout = html.Div(children=[
@@ -17,7 +29,7 @@ def dash_test(data):
                 'data': data['graph'],
                 'layout': {
                     'title': {
-                        'text': '<b>Top 5 Songs of 2019<b>',
+                        'text': title_text,
                         'y': '5',
                         'x': '0.5',
                         'xanchor': 'center'
@@ -32,7 +44,7 @@ def dash_test(data):
                     'images': data['imgs'],
                     'yaxis': {
                         'title': {
-                            'text': '<b>Plays in 2019<b>',
+                            'text': images_text,
                             'size': '20'
                         }
                     },
