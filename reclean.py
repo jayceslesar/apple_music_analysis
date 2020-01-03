@@ -33,6 +33,7 @@ def active_clean(path):
     months_num = []
     months = []
     weekdays = []
+    weekday_num = []
     dates = df['Event Start Timestamp'].tolist()
     for date in dates:
         date_parts = date[:10].split('-')
@@ -42,9 +43,11 @@ def active_clean(path):
             int(date_parts[0]), int(date_parts[1]), int(date_parts[2]))
         weekdays.append(curr_date.strftime('%A'))
         months.append(curr_date.strftime('%b'))
+        weekday_num.append(date_parts[2])
     df['Year'] = years
     df['Month Num'] = months_num
     df['Month Name'] = months
     df['Weekday'] = weekdays
-    # add weather daa (IE sunny, rainy...)
+    df['Weekday Num'] = weekday_num
+    # TODO: add weather daa (IE sunny, rainy...)
     return df
