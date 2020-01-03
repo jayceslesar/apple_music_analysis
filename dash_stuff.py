@@ -10,13 +10,19 @@ def dash_test(data):
     type = data.pop('type')
     if type == 'year':
         year = data.pop('year')
-        title_text = '<b>Top 5 Songs of ' + year + '<b>'
+        title_text = '<b>Top 5 Songs of ' + year + \
+            ' (' + str(data['mins_total']) + ' minutes listened) ' + '<b>'
         images_text = '<b>Plays in ' + year + '<b>'
     if type == 'month':
         year = data.pop('year')
         month = data.pop('month')
-        title_text = '<b>Top 5 Songs of ' + month + ' ' + year + '<b>'
+        title_text = '<b>Top 5 Songs of ' + month + ' ' + year + \
+            ' (' + str(data['mins_total']) + ' minutes listened) ' + '<b>'
         images_text = '<b>Plays in ' + month + ' ' + year + '<b>'
+    if type == 'week':
+        title_text = '<b>Top 5 Songs of the past week (' + str(
+            data['mins_total']) + ' minutes listened)<b>'
+        images_text = '<b>Plays in the past week<b>'
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
     app.layout = html.Div(children=[
