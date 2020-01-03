@@ -38,3 +38,14 @@ def mins_total(df):
     for time in times:
         total_seconds += time.seconds
     return int(round(total_seconds/60, 0))
+
+
+def past_week_dates(most_recent_day):
+    today = datetime.date.today()
+    if str(today) == most_recent_day:
+        return [datetime.date.today() - datetime.timedelta(days=i) for i in range(8)][1:]
+    else:
+        easy_day = most_recent_day.split('-')
+        day = datetime.date(int(easy_day[0]), int(
+            easy_day[1]), int(easy_day[2]))
+        return [day - datetime.timedelta(days=i) for i in range(7)]
