@@ -3,6 +3,7 @@ from collections import Counter
 import unicodedata
 import re
 import unicodedata
+import coverpy
 
 
 def fix(text):
